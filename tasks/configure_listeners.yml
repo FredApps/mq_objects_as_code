@@ -25,7 +25,7 @@
   failed_when: >-
     listener_check.rc not in [0, 10] or
     (listener_check.rc == 10 and
-    ((listener_check.stdout ~ listener_check.stderr) | regex_search('(?m)^\\s*AMQ8147E:')) is none)
+    ((listener_check.stdout ~ listener_check.stderr) | regex_search('(?m)^\\s*AMQ8147E?:')) is none)
 
 - name: Create missing listeners
   ansible.builtin.command:
@@ -91,7 +91,7 @@
   failed_when: >-
     listener_status.rc not in [0, 10] or
     (listener_status.rc == 10 and
-    ((listener_status.stdout ~ listener_status.stderr) | regex_search('(?m)^\\s*AMQ8147E:')) is none)
+    ((listener_status.stdout ~ listener_status.stderr) | regex_search('(?m)^\\s*AMQ8147E?:')) is none)
 
 - name: Start stopped listeners
   ansible.builtin.command:
