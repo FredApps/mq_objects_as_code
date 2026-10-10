@@ -266,11 +266,11 @@ class ExecutionTaskTests(unittest.TestCase):
     def test_channel_topic_and_subscription_missing_objects_are_created(self):
         fixtures = [
             ("configure_channels.yml", "channels.yml",
-             "mq_channel:\n  - name: C1\n    type: RCVR\n    host_qmgr: QM1\n", "DEFINE CHANNEL('C1')"),
+             "mq_channel:\n  - name: C1\n    type: RCVR\n    host_qmgr: QM1\n", "DEFINE CHANNEL('C1') CHLTYPE(RCVR)"),
             ("configure_topics.yml", "topics.yml",
-             "mq_topics:\n  - name: T1\n    topic_str: /orders\n    host_qmgr: QM1\n", "DEFINE TOPIC('T1')"),
+             "mq_topics:\n  - name: T1\n    topic_str: /orders\n    host_qmgr: QM1\n", "DEFINE TOPIC('T1') TOPICSTR('/orders')"),
             ("configure_subscriptions.yml", "subscriptions.yml",
-             "mq_subscriptions:\n  - name: S1\n    topic_str: /orders\n    dest: DEST.Q\n    host_qmgr: QM1\n", "DEFINE SUB('S1')"),
+             "mq_subscriptions:\n  - name: S1\n    topic_str: /orders\n    dest: DEST.Q\n    host_qmgr: QM1\n", "DEFINE SUB('S1') TOPICSTR('/orders') DEST('DEST.Q')"),
         ]
         for task, vars_file, config, expected in fixtures:
             with self.subTest(task=task):
