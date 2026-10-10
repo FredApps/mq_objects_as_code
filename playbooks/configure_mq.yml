@@ -59,6 +59,16 @@
 
     # Complete every available validation before the first MQ command. With
     # linear execution and any_errors_fatal, a bad host also stops its peers.
+    - name: Validate authority records before changes
+      ansible.builtin.include_tasks:
+        file: ../validation/validate_authrecords.yml
+      when: "'mq_auth_records.yml' in mq_object_file_names"
+
+    - name: Validate channel authentication records before changes
+      ansible.builtin.include_tasks:
+        file: ../validation/validate_chlauth.yml
+      when: "'mq_chlauth.yml' in mq_object_file_names"
+
     - name: Validate queue configuration
       ansible.builtin.include_tasks: ../validation/queue_validation.yml
       when: "'queues.yml' in mq_object_file_names"
