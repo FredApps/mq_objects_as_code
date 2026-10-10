@@ -45,6 +45,9 @@ log.append({"argv": args, "qmgr": qmgr, "stdin": command,
 log_path.write_text(json.dumps(log))
 
 mode = os.environ.get("MQSC_FAKE_MODE")
+if mode == "legacy" and command.startswith("DIS "):
+    print("AMQ8147: IBM MQ object not found")
+    sys.exit(10)
 if mode and command.startswith("DIS "):
     if mode == "unexpected":
         print("AMQ9999E: synthetic queue manager failure")
@@ -82,7 +85,7 @@ elif command.startswith("DIS LISTENER("):
 elif command.startswith("DIS LSSTATUS("):
     found = name in objects.setdefault("listeners", []) and running.get(name, False)
     if found:
-        print("AMQ8417: Display Listener Status details. LISTENER(%s) STATUS(RUNNING)" % name)
+        print("AMQ8631I: Display Listener Status details. LISTENER(%s) STATUS(RUNNING)" % name)
         sys.exit(0)
     print("AMQ8147E: IBM MQ object %s not found" % name)
     sys.exit(10)
@@ -303,6 +306,14 @@ class ExecutionTaskTests(unittest.TestCase):
                 self.assertNotEqual(result.returncode, 0)
                 self.assertFalse([entry for entry in log if entry["stdin"].startswith("DEFINE ")])
                 self.assertFalse(state["objects"].get("topics"))
+
+    def test_missing_object_message_without_severity_suffix(self):
+        _, log, _ = self.run_task(
+            "configure_topics.yml", "topics.yml",
+            "mq_topics:\n  - name: T1\n    topic_str: /orders\n    host_qmgr: QM1\n",
+            mode="legacy",
+        )
+        self.assertEqual(len(self.invocations(log, "DEFINE TOPIC(")), 1)
 
     def test_check_mode_runs_read_probe_predicts_create_without_writing(self):
         result, log, state = self.run_task(

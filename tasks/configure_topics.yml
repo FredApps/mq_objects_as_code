@@ -25,7 +25,7 @@
   failed_when: >-
     topic_check.rc not in [0, 10] or
     (topic_check.rc == 10 and
-    ((topic_check.stdout ~ topic_check.stderr) | regex_search('(?m)^\\s*AMQ8147E:')) is none)
+    ((topic_check.stdout ~ topic_check.stderr) | regex_search('(?m)^\\s*AMQ8147E?:')) is none)
 
 - name: Create missing topics
   ansible.builtin.command:
